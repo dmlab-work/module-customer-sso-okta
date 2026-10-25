@@ -81,7 +81,7 @@ Extraction stays open if the copies grow or drift (rule of three) — not yet ea
 
 ## Requirements
 
-- Magento **2.4.x**
+- Magento **2.4.x** (tested on 2.4.9)
 - PHP **8.3 – 8.5**
 
 ## Part of the DMLab identity suite

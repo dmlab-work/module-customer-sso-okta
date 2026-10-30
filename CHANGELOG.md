@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1
+
+- Requires Magento 2.4.7+ and PHP 8.2–8.5: `magento/*` floors from 2.4.7, `phpunit/phpunit` `^11.5||^12.5`.
+- CI tests PHP 8.2–8.5 and sets `notify-on-install false`.
+- Composer keywords.
+- README: intro, screenshot, install, requirements, Hyvä status.
+
 ## 0.2.0
 
 - **Org domain must be `https`**: `http://` and other schemes, paths, queries, fragments and userinfo are rejected on save and at login. Bare hosts get `https://`.

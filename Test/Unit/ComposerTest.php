@@ -62,6 +62,15 @@ class ComposerTest extends TestCase
         }
     }
 
+    public function testVersionConstraints(): void
+    {
+        self::assertSame('~8.2.0||~8.3.0||~8.4.0||~8.5.0', $this->composer['require']['php']);
+        self::assertSame('^103.0.7', $this->composer['require']['magento/framework']);
+        self::assertSame('^101.1.7', $this->composer['require']['magento/module-store']);
+        self::assertSame('^101.2.7', $this->composer['require']['magento/module-config']);
+        self::assertSame('^11.5||^12.5', $this->composer['require-dev']['phpunit/phpunit']);
+    }
+
     public function testEveryDirectlyUsedPackageIsRequired(): void
     {
         $used = $this->usedPackages();
@@ -85,6 +94,67 @@ class ComposerTest extends TestCase
             ],
             $this->composer['support']
         );
+    }
+
+    public function testKeywordsAreDeclared(): void
+    {
+        foreach (['magento2', 'magento2-module', 'magento 2', 'okta', 'sso'] as $keyword) {
+            self::assertContains($keyword, $this->composer['keywords'] ?? [], $keyword . ' keyword is missing');
+        }
+    }
+
+    public function testCiTestsPhp82To85(): void
+    {
+        self::assertMatchesRegularExpression(
+            "/^\s+php: \['8\.2', '8\.3', '8\.4', '8\.5'\]$/m",
+            $this->ciWorkflow()
+        );
+    }
+
+    public function testCiDisablesPackagistNotifyBeforeInstall(): void
+    {
+        $ci = $this->ciWorkflow();
+        preg_match('/^\s+- run: composer config notify-on-install false$/m', $ci, $notify, PREG_OFFSET_CAPTURE);
+        $installs = preg_match_all('/^\s+- uses: ramsey\/composer-install@/m', $ci, $install, PREG_OFFSET_CAPTURE);
+
+        self::assertNotEmpty($notify, 'notify-on-install false step is missing');
+        self::assertSame(1, $installs, 'exactly one composer install expected');
+        self::assertLessThan($install[0][0][1], $notify[0][1]);
+    }
+
+    public function testReadmeScreenshotExists(): void
+    {
+        $image = $this->moduleRoot . '/.github/images/config.png';
+
+        self::assertFileExists($image);
+        self::assertSame(IMAGETYPE_PNG, getimagesize($image)[2] ?? null);
+    }
+
+    public function testReadmeSectionsAreInOrder(): void
+    {
+        $readme = (string) file_get_contents($this->moduleRoot . '/README.md');
+        preg_match_all('/^## (.+)$/m', $readme, $matches);
+
+        self::assertSame(
+            ['Install', 'Requirements', 'Set up Okta', 'Hyvä', 'Architecture', 'License'],
+            $matches[1]
+        );
+        self::assertStringContainsString('](.github/images/config.png)', $readme);
+        self::assertStringContainsString('Magento 2.4.7+ · PHP 8.2–8.5', $readme);
+        self::assertLessThan(strpos($readme, '## Install'), strpos($readme, '.github/images/config.png'));
+    }
+
+    public function testChangelogTopSectionMatchesVersion(): void
+    {
+        $changelog = (string) file_get_contents($this->moduleRoot . '/CHANGELOG.md');
+
+        self::assertSame(1, preg_match('/^## (\S+)$/m', $changelog, $match));
+        self::assertSame($this->composer['version'] ?? null, $match[1]);
+    }
+
+    private function ciWorkflow(): string
+    {
+        return (string) file_get_contents($this->moduleRoot . '/.github/workflows/ci.yml');
     }
 
     /**

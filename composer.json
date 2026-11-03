@@ -16,7 +16,7 @@
         "okta login"
     ],
     "license": "OSL-3.0",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "authors": [
         {
             "name": "DMLab",
@@ -33,8 +33,8 @@
         "magento/framework": "^103.0.7",
         "magento/module-store": "^101.1.7",
         "magento/module-config": "^101.2.7",
-        "dmlab/module-customer-sso": "^0.2.0",
-        "dmlab/module-sso-core": "^0.2.0"
+        "dmlab/module-customer-sso": "^0.2.0||^0.3.0",
+        "dmlab/module-sso-core": "^0.2.0||^0.3.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5||^12.5"

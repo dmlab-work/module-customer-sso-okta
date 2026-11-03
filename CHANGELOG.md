@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2
+
+- Accepts `dmlab/module-sso-core` and `dmlab/module-customer-sso` 0.3.
+
 ## 0.2.1
 
 - Requires Magento 2.4.7+ and PHP 8.2–8.5: `magento/*` floors from 2.4.7, `phpunit/phpunit` `^11.5||^12.5`.
